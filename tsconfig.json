@@ -6,7 +6,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["./src/*"]
+      "src/*": ["./src/*"]
     },
     "strict": true,
     "esModuleInterop": true,

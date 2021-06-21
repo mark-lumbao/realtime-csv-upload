@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-import setupRoutes from '@app/routes';
+import setupRoutes from 'src/routes';
 
 const fastify = Fastify({
   logger: true,

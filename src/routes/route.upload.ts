@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 // @ts-ignore fastify-file-upload has no support yet for ts :(
 import fileUpload from 'fastify-file-upload';
-import FileType from '@app/types/files';
+import FileType from 'src/types/files';
 import reatimeUpload from './route.upload-csv';
 
 const rootRoutes = async (fastify: FastifyInstance) => {

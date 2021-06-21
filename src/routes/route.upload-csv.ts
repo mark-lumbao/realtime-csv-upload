@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import FileType from '@app/types/files';
+import FileType from 'src/types/files';
 
 const rootRoutes = async (fastify: FastifyInstance) => {
   fastify.route({

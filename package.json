@@ -15,7 +15,7 @@
     "realtime"
   ],
   "_moduleAliases": {
-    "@app": "lib/src"
+    "src": "lib/src"
   },
   "author": "Mark Anthony Lumbao",
   "license": "ISC",
