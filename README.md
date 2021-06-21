@@ -9,7 +9,6 @@
     - Node Streams
     - Fastify
     - Socket.io
-    - Formidable
 
 ### Process Procedure
 
