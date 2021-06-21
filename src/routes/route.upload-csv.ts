@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import fAsync from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
+import csv from 'csv-parser';
 import FileType from 'src/types/files';
 import { fileUploadSchema } from 'src/schema/upload';
 import dirCheck from 'src/utils/route/upload';
@@ -32,13 +33,13 @@ const rootRoutes = async (fastify: FastifyInstance) => {
         /**
          * Create a readable string pointing to the file we just created.
          */
-        const rStream = fs.createReadStream(filePath, 'utf8');
+        const rStream = fs.createReadStream(filePath, 'utf8').pipe(csv());
         /**
-         * On read stream open notify user. Here we should
-         * create an instance of the socket the send details
-         * to user so to start listening for updates.
+         * Once read stream has been create notify user.
+         * Here we should create a socket instance and send
+         * details so user can start listening for updates.
          */
-        rStream.on('open', () => reply.send('Process has started'));
+        reply.send('Process has started');
         /**
          * On each data event in the read stream we should run what we
          * want to the data and send notification to user on each failure
