@@ -6,6 +6,7 @@ import csv from 'csv-parser';
 import FileType from 'src/types/files';
 import { fileUploadSchema } from 'src/schema/upload';
 import dirCheck from 'src/utils/route/upload';
+import camelCase from 'src/utils/camelCase';
 
 const rootRoutes = async (fastify: FastifyInstance) => {
   fastify.route({
@@ -33,7 +34,10 @@ const rootRoutes = async (fastify: FastifyInstance) => {
         /**
          * Create a readable string pointing to the file we just created.
          */
-        const rStream = fs.createReadStream(filePath, 'utf8').pipe(csv());
+        const rStream = fs.createReadStream(filePath, 'utf8')
+          .pipe(csv({
+            mapHeaders: ({ header }) => camelCase(header),
+          }));
         /**
          * Once read stream has been create notify user.
          * Here we should create a socket instance and send
