@@ -13,7 +13,7 @@
 
 ### Process Procedure
 
-- Client submit a POST request to `{host:port}/upload`.
+- Client submit a POST request to `{host:port}/upload/csv`.
 - Request will have to contain a form data with csv file
 - Server will first sanitize then validate the request body for security
 - Instantiate a socket instance and return its details to client
