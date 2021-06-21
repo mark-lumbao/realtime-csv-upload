@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 // @ts-ignore fastify-file-upload has no support yet for ts :(
 import fileUpload from 'fastify-file-upload';
 import FileType from 'src/types/files';
+import { multiFileUploadSchema } from 'src/schema/upload';
 import reatimeUpload from './route.upload-csv';
 
 const rootRoutes = async (fastify: FastifyInstance) => {
@@ -11,15 +12,7 @@ const rootRoutes = async (fastify: FastifyInstance) => {
   fastify.route({
     method: 'POST',
     url: '/',
-    schema: {
-      body: {
-        type: 'object',
-        properties: {
-          file: { type: ['object', 'array'] },
-        },
-        required: ['file'],
-      },
-    },
+    schema: multiFileUploadSchema,
     handler: (request, reply) => {
       const { files } = request.raw as unknown as { files: { file: FileType } };
       const { file: uploads } = files;
