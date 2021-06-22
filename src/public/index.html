@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Realtime CSV Uploader</title>
+  </head>
+  <body>
+    <div id="progress">
+      <h1>Preview Progress Here</h1>
+    </div>
+    <script>
+      const socket = new WebSocket('ws://localhost:3000');
+
+      socket.onmessage = (e) => {
+        document.getElementById('progress').append('NEW CHUNK START');
+        document.getElementById('progress').append(e.data);
+        document.getElementById('progress').append('NEW CHUNK END');
+      };
+
+      socket.onclose = (_) => {
+        document.getElementById('progress').append('Socket is closed.');
+      }
+    </script>
+  </body>
+</html>

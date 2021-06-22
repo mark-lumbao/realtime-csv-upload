@@ -3,6 +3,7 @@ import fAsync from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
 import csv from 'csv-parser';
+import WebSocket from 'ws';
 import FileType from 'src/types/files';
 import { fileUploadSchema } from 'src/schema/upload';
 import dirCheck from 'src/utils/route/upload';
@@ -20,42 +21,45 @@ const rootRoutes = async (fastify: FastifyInstance) => {
       const dirPath = path.join(process.cwd(), 'lib/temp');
       const filePath = path.join(dirPath, file.name);
 
-      if (file.mimetype !== 'text/csv') {
-        reply.code(400).send(new Error('Invalid file format'));
-      } else {
-        /**
-         * Create temp folder in there's none.
-         */
-        await dirCheck(dirPath);
-        /**
-         * Write file temporarily
-         */
-        await fAsync.writeFile(filePath, file.data);
-        /**
-         * Create a readable string pointing to the file we just created.
-         */
-        const rStream = fs.createReadStream(filePath, 'utf8')
-          .pipe(csv({
-            mapHeaders: ({ header }) => camelCase(header),
-          }));
-        /**
-         * Once read stream has been create notify user.
-         * Here we should create a socket instance and send
-         * details so user can start listening for updates.
-         */
-        reply.send('Process has started');
-        /**
-         * On each data event in the read stream we should run what we
-         * want to the data and send notification to user on each failure
-         * or success.
-         */
-        rStream.on('data', (chunk) => fastify.log.info(chunk));
-        /**
-         * On read stream end we should run a cleanup process where
-         * we notify user that the process has ended. Delete the temporary
-         * file we created. Then end the instance of the socket.
-         */
-        rStream.on('end', async () => fAsync.rm(filePath));
+      if (file.mimetype !== 'text/csv') reply.code(400).send(new Error('Invalid file format'));
+      else {
+        await dirCheck(dirPath); // Create temp folder in there's none.
+        await fAsync.writeFile(filePath, file.data); // Write file temporarily
+
+        const wss = new WebSocket.Server({ port: Number(process.env.WSPORT) || 4000 });
+        reply.send(`ws://${process.env.HOST}:${process.env.WSPORT}`);
+
+        wss.on('connection', (socketStream) => {
+          /**
+           * Create a readable stream pointing to the temporary file that was created.
+           */
+          const rStream = fs.createReadStream(filePath, 'utf8')
+            .pipe(csv({
+              mapHeaders: ({ header }) => camelCase(header),
+            }));
+          /**
+           * Once read stream has been created log the process.
+           */
+          socketStream.on('open', () => fastify.log.info('A new socket was created for an upload process.'));
+          /**
+           * On each data event in the read stream we can do whatever we
+           * want to the data and send notification to user on each failure
+           * or success. In this example I am only sending the chunk the user.
+           */
+          rStream.on('data', async (chunk) => {
+            socketStream.send(JSON.stringify(chunk));
+          });
+          /**
+           * On read stream end we should run a cleanup process where we:
+           * Delete the temporary the temporary file and close the webscoket instance.
+           */
+          rStream.on('end', async () => {
+            fAsync.rm(filePath);
+            wss.close();
+          });
+
+          wss.on('close', () => fastify.log.info('Process has ended'));
+        });
       }
     },
   });

@@ -30,10 +30,12 @@
     "typescript": "^4.3.4"
   },
   "dependencies": {
+    "@types/ws": "^7.4.5",
     "csv-parser": "^3.0.0",
     "dotenv": "^10.0.0",
     "fastify": "^3.18.0",
     "fastify-file-upload": "^3.0.0",
-    "module-alias": "^2.2.2"
+    "module-alias": "^2.2.2",
+    "ws": "^7.5.0"
   }
 }
