@@ -5,7 +5,7 @@ import FileType from 'src/types/files';
 import { multiFileUploadSchema } from 'src/schema/upload';
 import reatimeUpload from './route.upload-csv';
 
-const rootRoutes = async (fastify: FastifyInstance) => {
+const uploadRoute = async (fastify: FastifyInstance) => {
   fastify.register(fileUpload);
   fastify.register(reatimeUpload, { prefix: '/csv' });
 
@@ -41,4 +41,4 @@ const rootRoutes = async (fastify: FastifyInstance) => {
   });
 };
 
-export default rootRoutes;
+export default uploadRoute;

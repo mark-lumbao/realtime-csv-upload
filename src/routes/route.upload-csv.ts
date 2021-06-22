@@ -4,12 +4,13 @@ import fs from 'fs';
 import path from 'path';
 import csv from 'csv-parser';
 import WebSocket from 'ws';
+import crypto from 'crypto';
 import FileType from 'src/types/files';
 import { fileUploadSchema } from 'src/schema/upload';
 import dirCheck from 'src/utils/route/upload';
 import camelCase from 'src/utils/camelCase';
 
-const rootRoutes = async (fastify: FastifyInstance) => {
+const csvUploadRoute = async (fastify: FastifyInstance) => {
   fastify.route({
     method: 'POST',
     url: '/',
@@ -19,7 +20,11 @@ const rootRoutes = async (fastify: FastifyInstance) => {
       const { file } = files;
 
       const dirPath = path.join(process.cwd(), 'lib/temp');
-      const filePath = path.join(dirPath, file.name);
+      const filePath = path.join(
+        dirPath,
+        // below generates a unique a secure name for the temporary file
+        crypto.randomBytes(Math.ceil(15 / 2)).toString('hex').slice(0, 15),
+      );
 
       if (file.mimetype !== 'text/csv') reply.code(400).send(new Error('Invalid file format'));
       else {
@@ -65,4 +70,4 @@ const rootRoutes = async (fastify: FastifyInstance) => {
   });
 };
 
-export default rootRoutes;
+export default csvUploadRoute;
