@@ -8,6 +8,10 @@
       <h1>Preview Progress Here</h1>
     </div>
     <script>
+      /*
+       * This is just for demo purposes. Manually indicate your
+       * websocket path here if you want to use it.
+       */
       const socket = new WebSocket('ws://localhost:3000');
 
       socket.onmessage = (e) => {
