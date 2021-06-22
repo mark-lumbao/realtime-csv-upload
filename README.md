@@ -8,7 +8,7 @@
 
     - Node Streams
     - Fastify
-    - Socket.io
+    - Websockets
 
 ### Process Procedure
 
