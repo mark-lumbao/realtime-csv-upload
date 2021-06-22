@@ -7,8 +7,6 @@ import WebSocket from 'ws';
 import crypto from 'crypto';
 import FileType from 'src/types/files';
 import { fileUploadSchema } from 'src/schema/upload';
-import dirCheck from 'src/utils/route/upload';
-import camelCase from 'src/utils/camelCase';
 
 const csvUploadRoute = async (fastify: FastifyInstance) => {
   fastify.route({
@@ -28,7 +26,7 @@ const csvUploadRoute = async (fastify: FastifyInstance) => {
 
       if (file.mimetype !== 'text/csv') reply.code(400).send(new Error('Invalid file format'));
       else {
-        await dirCheck(dirPath); // Create temp folder in there's none.
+        await fastify.dirCheck(dirPath); // Create temp folder in there's none.
         await fAsync.writeFile(filePath, file.data); // Write file temporarily
 
         const wss = new WebSocket.Server({ port: Number(process.env.WSPORT) || 4000 });
@@ -40,7 +38,7 @@ const csvUploadRoute = async (fastify: FastifyInstance) => {
            */
           const rStream = fs.createReadStream(filePath, 'utf8')
             .pipe(csv({
-              mapHeaders: ({ header }) => camelCase(header),
+              mapHeaders: ({ header }) => fastify.camelCase(header),
             }));
           /**
            * Once read stream has been created log the process.

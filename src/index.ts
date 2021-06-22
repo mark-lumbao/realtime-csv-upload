@@ -1,9 +1,16 @@
 import Fastify from 'fastify';
 import setupRoutes from 'src/routes';
+import camelCase from 'src/utils/camelCase';
+import dirCheck from 'src/utils/dirCheck';
 
 const fastify = Fastify({
   logger: true,
 });
+/**
+ * Global scope decorators
+ */
+fastify.decorate('camelCase', camelCase);
+fastify.decorate('dirCheck', dirCheck);
 /**
  * Initialize routes here
  */
